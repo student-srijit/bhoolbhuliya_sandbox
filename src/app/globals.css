@@ -1233,6 +1233,300 @@ code {
   font-size: 0.8rem;
 }
 
+/* ===================================================================
+   GLITCH TRANSITION OVERLAY  (glx-*)
+   =================================================================== */
+
+/* ---- base overlay ---- */
+.glx {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+  animation: glx-fadeIn 0.15s ease-out;
+}
+
+@keyframes glx-fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- phase modifiers ---- */
+.glx--boot  { background: #000; }
+.glx--glitch {
+  animation: glx-shake 0.1s infinite;
+  background: #000;
+}
+.glx--resolve {
+  background: #000;
+  animation: glx-flash 0.3s ease-out;
+}
+
+@keyframes glx-shake {
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-4px, 2px); }
+  20%  { transform: translate(3px, -3px); }
+  30%  { transform: translate(-2px, 4px); }
+  40%  { transform: translate(4px, -1px); }
+  50%  { transform: translate(-3px, -2px); }
+  60%  { transform: translate(2px, 3px); }
+  70%  { transform: translate(-4px, -4px); }
+  80%  { transform: translate(3px, 2px); }
+  90%  { transform: translate(-1px, -3px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes glx-flash {
+  0%   { background: #0f0; }
+  15%  { background: #fff; }
+  30%  { background: #0ff; }
+  50%  { background: #000; }
+  100% { background: #000; }
+}
+
+/* ---- static noise canvas ---- */
+.glx__noise {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ---- scanlines ---- */
+.glx__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  animation: glx-scanmove 0.3s linear infinite;
+}
+
+@keyframes glx-scanmove {
+  from { background-position-y: 0; }
+  to   { background-position-y: 4px; }
+}
+
+/* ---- RGB split bars ---- */
+.glx__rgb-bars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.glx--glitch .glx__rgb-bars {
+  opacity: 1;
+  background:
+    linear-gradient(90deg, rgba(255,0,0,0.08) 33%, transparent 33%, transparent 66%, rgba(0,0,255,0.08) 66%);
+  animation: glx-rgb-shift 0.15s infinite;
+}
+
+@keyframes glx-rgb-shift {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-6px); }
+  50%  { transform: translateX(4px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+/* ---- horizontal glitch slices ---- */
+.glx__slice {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 65, 0.15) 20%,
+    rgba(0, 255, 255, 0.1) 40%,
+    transparent 60%,
+    rgba(255, 0, 100, 0.12) 80%,
+    transparent 100%
+  );
+  animation: glx-slice-slide 0.2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes glx-slice-slide {
+  from { transform: translateX(-20px) skewX(-2deg); }
+  to   { transform: translateX(20px) skewX(2deg); }
+}
+
+/* ---- center content ---- */
+.glx__content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 620px;
+  width: 90%;
+  padding: 32px;
+}
+
+/* skull icon */
+.glx__icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 65, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: glx-icon-pulse 0.8s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+.glx__skull {
+  font-size: 36px;
+  animation: glx-skull-glitch 0.5s steps(2) infinite;
+}
+
+@keyframes glx-icon-pulse {
+  0%, 100% { transform: scale(1); border-color: rgba(0, 255, 65, 0.5); }
+  50%      { transform: scale(1.05); border-color: rgba(0, 255, 255, 0.8); }
+}
+
+@keyframes glx-skull-glitch {
+  0%   { opacity: 1; transform: translate(0); filter: none; }
+  25%  { opacity: 0.8; transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+  50%  { opacity: 1; transform: translate(1px, -1px); filter: none; }
+  75%  { opacity: 0.9; transform: translate(-1px, 2px); filter: hue-rotate(-90deg); }
+  100% { opacity: 1; transform: translate(0); filter: none; }
+}
+
+/* terminal block */
+.glx__terminal {
+  width: 100%;
+  background: rgba(0, 10, 0, 0.8);
+  border: 1px solid rgba(0, 255, 65, 0.25);
+  border-radius: 6px;
+  padding: 16px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  color: #0f0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.glx__terminal-header {
+  color: #0ff;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+  font-size: 0.7rem;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+.glx__line {
+  padding: 2px 0;
+  animation: glx-line-in 0.1s ease-out;
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.4);
+}
+
+@keyframes glx-line-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.glx__line-prefix {
+  color: rgba(0, 255, 65, 0.4);
+  font-size: 0.65rem;
+}
+
+.glx__line--success {
+  color: #0f0;
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(0, 255, 65, 0.6);
+  animation: glx-success-flash 0.3s ease-out;
+}
+
+@keyframes glx-success-flash {
+  0%   { color: #fff; text-shadow: 0 0 20px #fff; }
+  100% { color: #0f0; text-shadow: 0 0 12px rgba(0, 255, 65, 0.6); }
+}
+
+/* blinking cursor */
+.glx__cursor {
+  display: inline-block;
+  color: #0f0;
+  animation: glx-blink 0.5s steps(1) infinite;
+  text-shadow: 0 0 8px #0f0;
+}
+@keyframes glx-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* progress bar */
+.glx__progress-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.glx__progress-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(0, 255, 65, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 65, 0.15);
+}
+
+.glx__progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #0f0, #0ff);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  transition: width 0.15s ease-out;
+}
+
+.glx__progress-pct {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  color: #0ff;
+  min-width: 38px;
+  text-align: right;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+/* hex ticker */
+.glx__hex-ticker {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.55rem;
+  color: rgba(0, 255, 65, 0.2);
+  letter-spacing: 2px;
+  word-break: break-all;
+  text-align: center;
+  line-height: 1.4;
+  max-width: 500px;
+}
+
+/* CRT vignette */
+.glx__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
 /* ---- responsive ---- */
 
 @media (max-width: 767px) {

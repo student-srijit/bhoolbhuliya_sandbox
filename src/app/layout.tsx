@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import Providers from "./providers";
+import GlitchTransition from "./glitch-transition";
 import "./globals.css";
 
 const inter = Inter({
@@ -30,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`}>
       <body className="mp-root">
-        <Providers>{children}</Providers>
+        <Providers>
+          <GlitchTransition>{children}</GlitchTransition>
+        </Providers>
       </body>
     </html>
   );
